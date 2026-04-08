@@ -472,7 +472,7 @@
         <div class="emoji-wrap">💖</div>
         <h1>
           since you already
-          <span class="accent">know the question hehe 🤪</span>
+          <span class="accent">know the question hehe 😉</span>
         </h1>
          <p class="subtitle">
           i know i know what you said earlier… so this is me trying to be slightly less irritating 😅
@@ -504,7 +504,12 @@
     const buttonArea = document.getElementById('buttonArea');
     const successMessage = document.getElementById('successMessage');
 
- 
+    const images = [
+      'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1600&q=80',
+      'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1600&q=80',
+      'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1600&q=80',
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1600&q=80'
+    ];
 
     let currentIndex = 0;
     let activeLayer = bgA;
@@ -577,37 +582,16 @@
     }
 
     function createHeartBurst() {
-      const isMobile = window.innerWidth <= 640;
-      const burstCount = isMobile ? 14 : 20;
-      const emojis = ['💖', '💕', '💗', '✨'];
-      const fragment = document.createDocumentFragment();
-
-      for (let i = 0; i < burstCount; i++) {
+      for (let i = 0; i < 26; i++) {
         const heart = document.createElement('div');
         heart.className = 'heart';
-        heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-
-        const startX = 18 + Math.random() * 64;
-        const driftX = (Math.random() - 0.5) * (isMobile ? 80 : 130);
-        const duration = isMobile ? 2800 + Math.random() * 700 : 3000 + Math.random() * 900;
-        const delay = Math.random() * 180;
-        const size = isMobile ? 16 + Math.random() * 8 : 17 + Math.random() * 12;
-        const scale = 1 + Math.random() * 0.4;
-        const rotate = `${(Math.random() - 0.5) * 24}deg`;
-
-        heart.style.left = `${startX}vw`;
-        heart.style.fontSize = `${size}px`;
-        heart.style.setProperty('--drift-x', `${driftX}px`);
-        heart.style.setProperty('--heart-duration', `${duration}ms`);
-        heart.style.setProperty('--heart-scale', scale.toFixed(2));
-        heart.style.setProperty('--heart-rotate', rotate);
-        heart.style.animationDelay = `${delay}ms`;
-
-        fragment.appendChild(heart);
-        setTimeout(() => heart.remove(), duration + delay + 180);
+        heart.textContent = Math.random() > 0.5 ? '💖' : '💕';
+        heart.style.left = `${Math.random() * 100}vw`;
+        heart.style.animationDelay = `${Math.random() * 0.25}s`;
+        heart.style.fontSize = `${18 + Math.random() * 14}px`;
+        hearts.appendChild(heart);
+        setTimeout(() => heart.remove(), 3600);
       }
-
-      hearts.appendChild(fragment);
     }
 
     noBtn.addEventListener('mouseenter', moveNoButton);
@@ -623,19 +607,9 @@
     });
 
     yesBtn.addEventListener('click', () => {
-      yesBtn.disabled = true;
-      noBtn.style.pointerEvents = 'none';
-      buttonArea.style.opacity = '0';
-      buttonArea.style.transform = 'translateY(8px) scale(0.98)';
-      buttonArea.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-
-      requestAnimationFrame(() => {
-        createHeartBurst();
-        setTimeout(() => {
-          buttonArea.style.display = 'none';
-          successMessage.classList.add('show');
-        }, 180);
-      });
+      buttonArea.style.display = 'none';
+      successMessage.style.display = 'block';
+      createHeartBurst();
     });
 
     startBackgroundSlideshow();
