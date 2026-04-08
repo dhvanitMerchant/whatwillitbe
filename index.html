@@ -126,15 +126,35 @@
     }
 
     .memory-carousel {
-      position: relative;
-      width: 100%;
-      height: 200px;
-      border-radius: 20px;
+      position: absolute;
+      inset: 0;
+      border-radius: 30px;
       overflow: hidden;
-      margin-bottom: 16px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+      z-index: 0;
     }
 
+    .memory-carousel img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+      filter: saturate(1.05) brightness(0.9);
+    }
+
+    .memory-carousel img.active {
+      opacity: 1;
+    }
+
+  .card-bg-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.6));
+    backdrop-filter: blur(0px);
+    pointer-events: none;
+}
     .memory-carousel img {
       position: absolute;
       width: 100%;
@@ -211,7 +231,7 @@
     .content {
       text-align: center;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     .emoji-wrap {
@@ -395,16 +415,26 @@
       }
 
       .buttons {
-        flex-direction: column;
-        min-height: 160px;
+        min-height: 180px;
         gap: 12px;
       }
 
       #yesBtn,
       #noBtn {
-        position: relative;
         width: 100%;
         max-width: 280px;
+      }
+
+      #yesBtn {
+        position: relative;
+        z-index: 1;
+      }
+
+      #noBtn {
+        position: absolute;
+        left: 50%;
+        top: 92px;
+        transform: translateX(-50%);
       }
     }
   </style>
@@ -421,7 +451,7 @@
   <main class="shell">
 
     <section class="card">
-      <!-- Carousel INSIDE the card -->
+      <!-- Full card background carousel -->
       <div class="memory-carousel" id="memoryCarousel">
         <img src="images/Image1.jpg" class="active" />
         <img src="images/Image2.jpg" />
@@ -431,9 +461,9 @@
         <img src="images/Image6.jpg" />
         <img src="images/Image7.jpg" />
         <img src="images/Image8.jpg" />
-
-
       </div>
+      <div class="card-bg-overlay"></div>
+
       <div class="topbar">
         <div class="pill">✨ A small question, from my heart</div>
       </div>
@@ -518,28 +548,37 @@
       }, 5200);
     }
 
-    function moveNoButton() {
-      const isMobile = window.innerWidth <= 640;
-
-      if (isMobile) {
-        noBtn.style.transform = 'translateX(12px) scale(0.94)';
-        noBtn.style.opacity = '0.88';
-        setTimeout(() => {
-          noBtn.style.transform = 'translateX(0) scale(1)';
-          noBtn.style.opacity = '1';
-        }, 180);
-        return;
+    function moveNoButton(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
       }
 
       const areaRect = buttonArea.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
-      const maxX = areaRect.width - btnRect.width;
-      const maxY = areaRect.height - btnRect.height;
-      const randomX = Math.max(0, Math.random() * maxX);
-      const randomY = Math.max(0, Math.random() * maxY);
+
+      const computed = window.getComputedStyle(noBtn);
+      const currentLeft = parseFloat(computed.left) || 0;
+      const currentTop = parseFloat(computed.top) || 0;
+
+      const padding = 8;
+      const maxX = Math.max(padding, areaRect.width - btnRect.width - padding);
+      const maxY = Math.max(padding, areaRect.height - btnRect.height - padding);
+
+      let randomX = Math.random() * maxX;
+      let randomY = Math.random() * maxY;
+
+      if (Math.abs(randomX - currentLeft) < 40) {
+        randomX = Math.min(maxX, randomX + 60);
+      }
+
+      if (Math.abs(randomY - currentTop) < 28) {
+        randomY = Math.min(maxY, randomY + 40);
+      }
 
       noBtn.style.left = `${randomX}px`;
       noBtn.style.top = `${randomY}px`;
+      noBtn.style.transform = 'none';
     }
 
     function createHeartBurst() {
@@ -557,7 +596,15 @@
 
     noBtn.addEventListener('mouseenter', moveNoButton);
     noBtn.addEventListener('click', moveNoButton);
-    noBtn.addEventListener('touchstart', moveNoButton, { passive: true });
+    noBtn.addEventListener('touchstart', moveNoButton, { passive: false });
+
+    window.addEventListener('load', () => {
+      if (window.innerWidth <= 640) {
+        noBtn.style.left = '50%';
+        noBtn.style.top = '92px';
+        noBtn.style.transform = 'translateX(-50%)';
+      }
+    });
 
     yesBtn.addEventListener('click', () => {
       buttonArea.style.display = 'none';
