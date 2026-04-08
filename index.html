@@ -576,10 +576,11 @@
       noBtn.style.transform = 'none';
     }
 
-function createHeartBurst() {
+    function createHeartBurst() {
       const isMobile = window.innerWidth <= 640;
-      const burstCount = isMobile ? 16 : 24;
+      const burstCount = isMobile ? 14 : 20;
       const emojis = ['💖', '💕', '💗', '✨'];
+      const fragment = document.createDocumentFragment();
 
       for (let i = 0; i < burstCount; i++) {
         const heart = document.createElement('div');
@@ -587,12 +588,12 @@ function createHeartBurst() {
         heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
 
         const startX = 18 + Math.random() * 64;
-        const driftX = (Math.random() - 0.5) * (isMobile ? 90 : 140);
-        const duration = isMobile ? 3200 + Math.random() * 900 : 3400 + Math.random() * 1100;
-        const delay = Math.random() * 220;
-        const size = isMobile ? 18 + Math.random() * 10 : 18 + Math.random() * 14;
-        const scale = 1 + Math.random() * 0.45;
-        const rotate = `${(Math.random() - 0.5) * 28}deg`;
+        const driftX = (Math.random() - 0.5) * (isMobile ? 80 : 130);
+        const duration = isMobile ? 2800 + Math.random() * 700 : 3000 + Math.random() * 900;
+        const delay = Math.random() * 180;
+        const size = isMobile ? 16 + Math.random() * 8 : 17 + Math.random() * 12;
+        const scale = 1 + Math.random() * 0.4;
+        const rotate = `${(Math.random() - 0.5) * 24}deg`;
 
         heart.style.left = `${startX}vw`;
         heart.style.fontSize = `${size}px`;
@@ -602,9 +603,11 @@ function createHeartBurst() {
         heart.style.setProperty('--heart-rotate', rotate);
         heart.style.animationDelay = `${delay}ms`;
 
-        hearts.appendChild(heart);
-        setTimeout(() => heart.remove(), duration + delay + 200);
+        fragment.appendChild(heart);
+        setTimeout(() => heart.remove(), duration + delay + 180);
       }
+
+      hearts.appendChild(fragment);
     }
 
     noBtn.addEventListener('mouseenter', moveNoButton);
@@ -620,9 +623,19 @@ function createHeartBurst() {
     });
 
     yesBtn.addEventListener('click', () => {
-      buttonArea.style.display = 'none';
-      successMessage.style.display = 'block';
-      createHeartBurst();
+      yesBtn.disabled = true;
+      noBtn.style.pointerEvents = 'none';
+      buttonArea.style.opacity = '0';
+      buttonArea.style.transform = 'translateY(8px) scale(0.98)';
+      buttonArea.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+
+      requestAnimationFrame(() => {
+        createHeartBurst();
+        setTimeout(() => {
+          buttonArea.style.display = 'none';
+          successMessage.classList.add('show');
+        }, 180);
+      });
     });
 
     startBackgroundSlideshow();
