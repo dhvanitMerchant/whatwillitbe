@@ -125,6 +125,49 @@
       z-index: 2;
     }
 
+    .memory-carousel {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+    }
+
+    .memory-carousel img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .memory-carousel img.active {
+      opacity: 1;
+    }
+
+    .memory-carousel img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .memory-carousel img.active {
+      opacity: 1;
+    }
+
+    .memory-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.1);
+    }
+
     .card {
       position: relative;
       padding: 22px;
@@ -376,7 +419,21 @@
   <div class="hearts" id="hearts"></div>
 
   <main class="shell">
+
     <section class="card">
+      <!-- Carousel INSIDE the card -->
+      <div class="memory-carousel" id="memoryCarousel">
+        <img src="images/Image1.jpg" class="active" />
+        <img src="images/Image2.jpg" />
+        <img src="images/Image3.jpg" />
+        <img src="images/Image4.jpg" />
+        <img src="images/Image5.jpg" />
+        <img src="images/Image6.jpg" />
+        <img src="images/Image7.jpg" />
+        <img src="images/Image8.jpg" />
+
+
+      </div>
       <div class="topbar">
         <div class="pill">✨ A small question, from my heart</div>
       </div>
@@ -417,12 +474,12 @@
     const buttonArea = document.getElementById('buttonArea');
     const successMessage = document.getElementById('successMessage');
 
-const images = [
-  'images/image1.jpg',
-  'images/image2.jpg',
-  'images/image3.jpg',
-  'images/image4.jpg'
-];
+    const images = [
+      'https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1600&q=80',
+      'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1600&q=80',
+      'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1600&q=80',
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1600&q=80'
+    ];
 
     let currentIndex = 0;
     let activeLayer = bgA;
@@ -509,6 +566,20 @@ const images = [
     });
 
     startBackgroundSlideshow();
+
+    // Memory carousel
+    const carouselImages = document.querySelectorAll('#memoryCarousel img');
+    let carouselIndex = 0;
+
+    setInterval(() => {
+      carouselImages[carouselIndex].classList.remove('active');
+      carouselIndex = (carouselIndex + 1) % carouselImages.length;
+      carouselImages[carouselIndex].classList.add('active');
+    }, 2500);
   </script>
 </body>
 </html>
+
+
+
+
